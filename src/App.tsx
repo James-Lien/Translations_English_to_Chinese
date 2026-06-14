@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Trash2, Languages, Loader2 } from 'lucide-react';
+import { Send, Trash2, Languages, Loader2, Rabbit, Turtle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Message, TranslationResponse } from './types.ts';
 
@@ -62,6 +62,20 @@ export default function App() {
   const handleClear = () => {
     if (confirm('確定要清除所有對話紀錄嗎？')) {
       setMessages([]);
+    }
+  };
+
+  const speak = (text: string, rate: number = 1.0) => {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = rate;
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert('您的瀏覽器不支援語音合成功能。');
     }
   };
 
@@ -139,7 +153,27 @@ export default function App() {
                       key={pIdx} 
                       className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-200 transition-colors"
                     >
-                      <p className="text-slate-500 text-xs font-mono mb-2 uppercase tracking-widest opacity-50">English</p>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-slate-500 text-xs font-mono uppercase tracking-widest opacity-50">English</p>
+                        <div className="flex items-center gap-1">
+                          <button 
+                            onClick={() => speak(pair.en, 1.0)}
+                            className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all flex items-center gap-1"
+                            title="正常速度朗讀"
+                          >
+                            <Rabbit className="w-3.5 h-3.5" />
+                            <span className="text-[10px] font-bold">1x</span>
+                          </button>
+                          <button 
+                            onClick={() => speak(pair.en, 0.6)}
+                            className="p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all flex items-center gap-1"
+                            title="慢速朗讀"
+                          >
+                            <Turtle className="w-3.5 h-3.5" />
+                            <span className="text-[10px] font-bold">0.6x</span>
+                          </button>
+                        </div>
+                      </div>
                       <p className="text-slate-800 font-medium mb-3 leading-relaxed">{pair.en}</p>
                       <div className="h-px bg-slate-100 my-3" />
                       <p className="text-slate-500 text-xs font-mono mb-2 uppercase tracking-widest opacity-50">繁體中文</p>
