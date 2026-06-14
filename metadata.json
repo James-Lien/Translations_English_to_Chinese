@@ -1,0 +1,6 @@
+{
+  "name": "文章翻譯助手",
+  "description": "專業的英翻中文章翻譯工具，提供一行原文、一行翻譯的對照閱讀體驗。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
