@@ -143,7 +143,13 @@ export default function App() {
                       <p className="text-slate-800 font-medium mb-3 leading-relaxed">{pair.en}</p>
                       <div className="h-px bg-slate-100 my-3" />
                       <p className="text-slate-500 text-xs font-mono mb-2 uppercase tracking-widest opacity-50">繁體中文</p>
-                      <p className="text-blue-900 text-lg leading-relaxed font-medium">{pair.zh || <span className="text-slate-300 italic text-sm">正在翻譯中...</span>}</p>
+                      <p className="text-blue-900 text-lg leading-relaxed font-medium">
+                        {pair.zh || <span className="text-slate-300 italic text-sm">正在翻譯中...</span>}
+                      </p>
+                      <div className="mt-2 flex gap-2">
+                        <button className="px-3 py-1 bg-slate-200 text-sm rounded hover:bg-slate-300">正常速度讀出</button>
+                        <button className="px-3 py-1 bg-slate-200 text-sm rounded hover:bg-slate-300">較慢速度讀出</button>
+                      </div>
                     </div>
                   ))}
                 </div>
