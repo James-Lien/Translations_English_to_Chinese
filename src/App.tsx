@@ -30,27 +30,25 @@ export default function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
-      });
+      const userTexts = newMessages
+        .filter((m) => m.role === "user")
+        .map((m) => m.parts[0].text)
+        .join("\n");
 
-      const data: TranslationResponse = await response.json();
+      // Use Google Translate public endpoint for Traditional Chinese (zh-TW)
+      const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(input)}`);
+      const data = await response.json();
+      
+      const translated = data[0].map((segment: any) => segment[0]).join("");
 
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      if (data.text) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'model',
-            parts: [{ text: data.text! }],
-          },
-        ]);
-      }
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'model',
+          parts: [{ text: translated }],
+          original: input, // store original English text
+        },
+      ]);
     } catch (error) {
       console.error('Translation failed:', error);
       alert('翻譯失敗，請稍後再試。');
@@ -79,16 +77,14 @@ export default function App() {
     }
   };
 
-  const parseTranslation = (text: string) => {
-    // Split by single or multiple newlines
-    const lines = text.split(/\n+/).filter(l => l.trim() !== '');
+  const parseTranslation = (zh: string, en?: string) => {
+    // Split Chinese and optional English lines into parallel arrays
+    const zhLines = zh.split(/\n+/).filter(l => l.trim() !== '');
+    const enLines = en ? en.split(/\n+/).filter(l => l.trim() !== '') : [];
+    const max = Math.max(zhLines.length, enLines.length);
     const pairs: { en: string; zh: string }[] = [];
-    
-    for (let i = 0; i < lines.length; i += 2) {
-      pairs.push({
-        en: lines[i] || '',
-        zh: lines[i+1] || ''
-      });
+    for (let i = 0; i < max; i++) {
+      pairs.push({ en: enLines[i] || '', zh: zhLines[i] || '' });
     }
     return pairs;
   };
@@ -148,7 +144,7 @@ export default function App() {
                 </div>
               ) : (
                 <div className="w-full space-y-4">
-                  {parseTranslation(msg.parts[0].text).map((pair, pIdx) => (
+                  {parseTranslation(msg.parts[0].text, msg.original).map((pair, pIdx) => (
                     <div 
                       key={pIdx} 
                       className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-200 transition-colors"
@@ -180,10 +176,6 @@ export default function App() {
                       <p className="text-blue-900 text-lg leading-relaxed font-medium">
                         {pair.zh || <span className="text-slate-300 italic text-sm">正在翻譯中...</span>}
                       </p>
-                      <div className="mt-2 flex gap-2">
-                        <button className="px-3 py-1 bg-slate-200 text-sm rounded hover:bg-slate-300">正常速度讀出</button>
-                        <button className="px-3 py-1 bg-slate-200 text-sm rounded hover:bg-slate-300">較慢速度讀出</button>
-                      </div>
                     </div>
                   ))}
                 </div>
