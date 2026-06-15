@@ -17,7 +17,7 @@ const SYSTEM_INSTRUCTIONS = `你是一位專業的翻譯員，擅長將英文文
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = 3001; // changed from 3000 to avoid address in use
 
   app.use(express.json());
 

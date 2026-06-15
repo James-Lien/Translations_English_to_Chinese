@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Trash2, Languages, Loader2, Rabbit, Turtle } from 'lucide-react';
+import { Trash2, Languages, Loader2, Rabbit, Turtle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Message, TranslationResponse } from './types.ts';
 
@@ -228,7 +228,7 @@ export default function App() {
             disabled={!input.trim() || isLoading}
             className="h-11 w-11 flex items-center justify-center bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:bg-slate-400 transition-all shadow-md active:scale-95"
           >
-            <Send className="w-5 h-5" />
+            <span className="text-sm font-medium">發送</span>
           </button>
         </div>
         <p className="text-[10px] text-center text-slate-400 mt-2 font-medium">
